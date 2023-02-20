@@ -1,0 +1,54 @@
+#define rainPin A0
+#define greenLED 7
+#define redLED 5
+#define yelLED 6
+#define pomp 4
+// пороговое значение указывается тут:
+int value = 650;
+int thresholdValue = 800;
+
+void setup() {
+  pinMode(rainPin, INPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(yelLED, OUTPUT);
+  pinMode(pomp, OUTPUT);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(redLED, LOW);
+  digitalWrite(yelLED, LOW);
+  digitalWrite(pomp, LOW);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // считываем входные данные с аналогового контакта 0:
+  int sensorValue = analogRead(rainPin);
+  Serial.print(sensorValue);
+  if (sensorValue < value) {
+    Serial.println(" - Doesn't need pomping");
+    // " – Полив не нужен"
+    digitalWrite(redLED, LOW);
+    digitalWrite(greenLED, HIGH);
+    digitalWrite(yelLED, LOW);
+    digitalWrite(pomp, LOW);
+  }
+  else if (sensorValue < thresholdValue) {
+    Serial.println(" - Attention");
+    // " – внимание"
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yelLED, HIGH);
+    digitalWrite(redLED, LOW);
+    digitalWrite(pomp, LOW);
+  }
+  else {
+    Serial.println(" - Time to pomp your plant");
+    // " – Пора поливать!"
+    digitalWrite(redLED, HIGH);
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yelLED, LOW);
+    digitalWrite(pomp, HIGH);
+    delay(1000);
+    digitalWrite(pomp, LOW);
+  }
+  delay(500);
+}
