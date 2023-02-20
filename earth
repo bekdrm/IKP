@@ -3,9 +3,11 @@
 #define redLED 5
 #define yelLED 6
 #define pomp 4
+#define waterPin A1
 // пороговое значение указывается тут:
 int value = 650;
 int thresholdValue = 800;
+int water; // присваиваем имя для значений с аналогового входа A0
 
 void setup() {
   pinMode(rainPin, INPUT);
@@ -18,6 +20,10 @@ void setup() {
   digitalWrite(yelLED, LOW);
   digitalWrite(pomp, LOW);
   Serial.begin(9600);
+  //water sensor
+  pinMode(12, OUTPUT); // пин 12 со светодиодом будет выходом (англ. «output»)
+  pinMode(A1, INPUT);  // к входу A1 подключим датчик (англ. «intput»)
+  Serial.begin(9600);  // подключаем монитор порта
 }
 
 void loop() {
@@ -43,7 +49,7 @@ void loop() {
   else {
     Serial.println(" - Time to pomp your plant");
     // " – Пора поливать!"
-    digitalWrite(redLED, HIGH);
+    digitalWrite(redLED, LOW);
     digitalWrite(greenLED, LOW);
     digitalWrite(yelLED, LOW);
     digitalWrite(pomp, HIGH);
@@ -51,4 +57,11 @@ void loop() {
     digitalWrite(pomp, LOW);
   }
   delay(500);
+  water = analogRead(A1); // переменная "water" находится в интервале от 0 до 1023
+
+    if (water > 100) { digitalWrite(12, HIGH); } // включаем светодиод
+    if (water < 100) { digitalWrite(12, LOW); }  // выключаем светодиод
+
+  Serial.println(water); // выводим значение датчика на монитор
+  delay(1000);           // задержка в одну секунду
 }
